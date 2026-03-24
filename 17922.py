@@ -15,18 +15,18 @@ class Trader:
 
             # 2. Strategy for EMERALDS (Mean Reversion)
             if product == "EMERALDS":
-                # We want to buy at 9999 and sell at 10001
-                # If our position allows, we place these orders every tick
+                # found min spread was 8
+                # the VWAP fair price was found to be 10000
 
                 # Buy Order
                 if current_pos < LIMIT:
                     buy_qty = LIMIT - current_pos
-                    orders.append(Order(product, 9999, buy_qty))
+                    orders.append(Order(product, 9997, buy_qty))
 
                 # Sell Order
                 if current_pos > -LIMIT:
                     sell_qty = -LIMIT - current_pos
-                    orders.append(Order(product, 10001, sell_qty))
+                    orders.append(Order(product, 10003, sell_qty))
 
             # 3. Strategy for TOMATOES (Dynamic Market Making)
             elif product == "TOMATOES":
@@ -34,11 +34,10 @@ class Trader:
                     best_ask = min(order_depth.sell_orders.keys())
                     best_bid = max(order_depth.buy_orders.keys())
                     mid_price = (best_ask + best_bid) / 2
+                    delta = (best_ask - best_bid) / 4
 
-                    # We place orders slightly outside the mid-price
-                    # We use int() because prices must be integers
-                    buy_price = int(mid_price - 2)
-                    sell_price = int(mid_price)
+                    buy_price = int(best_bid + 1)
+                    sell_price = int(best_ask - 1)
 
                     if current_pos < LIMIT:
                         orders.append(Order(product, buy_price, LIMIT - current_pos))
